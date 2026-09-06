@@ -1,3 +1,9 @@
-# Apptio Cloudability Connector - AUTH_AND_CREDENTIALS.md
+# Apptio Cloudability Connector — Auth & Credentials Standard
 
-Standard documentation for Apptio Cloudability Connector in Imperal Cloud.
+**Compliance:** AUTH_AND_CREDENTIALS_STANDARD.md (B1–B10)
+
+## Схема аутентификации
+- **Метод:** API Key (Basic Auth: <api_key>:)
+- **Хранение:** Секреты сохраняются изолированно в хранилище секретов платформы Imperal.
+- **Валидация:** При сохранении ключа выполняется тестовый запрос `GET /v3/reporting/reports`.
+- **Отключение:** Удаление локальных ключей без воздействия на аккаунт вендора.
