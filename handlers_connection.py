@@ -35,7 +35,7 @@ async def resolve_client(ctx, connection_id: str = "") -> CloudabilityClient:
     return CloudabilityClient(api_key=conn["api_key"], base_url=conn.get("base_url", ""))
 
 @chat.function("connect_cloudability_connector", "Connect Cloudability account via credentials.", action_type="write", chain_callable=True, event="cloudability-connector.connect_cloudability_connector", effects=["create:connection"], data_model=ConnectionRecord)
-async def connect_cloudability_connector(params: ConnectParams, ctx) -> ActionResult:
+async def connect_cloudability_connector(ctx, params: ConnectParams) -> ActionResult:
     client = CloudabilityClient(api_key=params.api_key, base_url=params.base_url)
     res = await client.verify_auth()
     if res.get("status") == "error":
@@ -56,7 +56,7 @@ async def connect_cloudability_connector(params: ConnectParams, ctx) -> ActionRe
     return ActionResult.success(rec, summary=f"Connected Cloudability ({rec['label']}).")
 
 @chat.function("list_connections", "List configured Cloudability connections.", action_type="read", chain_callable=True, event="cloudability-connector.list_connections", effects=["read:connections"], data_model=ConnectionList)
-async def list_connections(params: NoParams, ctx) -> ActionResult:
+async def list_connections(ctx, params: NoParams) -> ActionResult:
     conns = await _load_conns(ctx)
     items = [{
         "id": c["id"],
@@ -68,7 +68,7 @@ async def list_connections(params: NoParams, ctx) -> ActionResult:
     return ActionResult.success({"connections": items, "total": len(items)}, summary=f"Found {len(items)} connection(s).")
 
 @chat.function("disconnect_cloudability_connector", "Disconnect Cloudability account and delete stored credentials.", action_type="destructive", chain_callable=True, event="cloudability-connector.disconnect_cloudability_connector", effects=["delete:connection"], data_model=DeleteResult)
-async def disconnect_cloudability_connector(params: ConnectionIdParams, ctx) -> ActionResult:
+async def disconnect_cloudability_connector(ctx, params: ConnectionIdParams) -> ActionResult:
     conns = await _load_conns(ctx)
     if not conns:
         return ActionResult.error("No connections to disconnect.")
